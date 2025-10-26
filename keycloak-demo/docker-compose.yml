@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.5
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+    ports:
+      - "8089:8089"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8089"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  spring-app:
+    build: .
+    ports:
+      - "${SPRING_SERVER_PORT:-8088}:8088"
+    environment:
+      KEYCLOAK_ADMIN_USER: ${KEYCLOAK_ADMIN_USER:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KEYCLOAK_ADMIN_CLIENT_SECRET: ${KEYCLOAK_ADMIN_CLIENT_SECRET:-admin-secret}
+      KEYCLOAK_AUTH_SERVER_URL: http://keycloak:8089
+      KEYCLOAK_REALM: demo-realm
+      KEYCLOAK_CERTS_URL: http://keycloak:8089/realms/demo-realm/protocol/openid-connect/certs
+    depends_on:
+      keycloak:
+        condition: service_healthy

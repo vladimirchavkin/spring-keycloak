@@ -1,0 +1,19 @@
+server:
+  port: 8088
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://keycloak:8089/realms/demo-realm/protocol/openid-connect/certs
+
+keycloak:
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8089}
+  realm: ${KEYCLOAK_REALM:demo-realm}
+  admin:
+    client-id: admin-cli
+    client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET:admin-secret}
+    username: ${KEYCLOAK_ADMIN_USER:admin}
+    password: ${KEYCLOAK_ADMIN_PASSWORD:admin}
+  certs-url: http://keycloak:8089/realms/demo-realm/protocol/openid-connect/certs
