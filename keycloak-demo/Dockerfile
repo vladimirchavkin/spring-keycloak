@@ -19,7 +19,7 @@ COPY src ./src
 RUN ./gradlew clean bootJar -x test --no-daemon
 
 # Этап 2: Создание финального образа
-FROM openjdk:21-jdk-slim
+FROM bellsoft/liberica-openjre-alpine
 
 WORKDIR /app
 
